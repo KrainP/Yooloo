@@ -90,6 +90,7 @@ public class YoolooClientHandler extends Thread {
 				switch (state) {
 				case ServerState_REGISTER:
 					// Neuer YoolooSpieler in Runde registrieren
+					cheaterList = new ArrayList<>();
 					if (antwortObject instanceof LoginMessage) {
 						LoginMessage newLogin = (LoginMessage) antwortObject;
 						// TODO GameMode des Logins wird noch nicht ausgewertet
@@ -112,8 +113,10 @@ public class YoolooClientHandler extends Thread {
 							// Neue YoolooKarte in Session ausspielen und Stich abfragen
 							YoolooKarte neueKarte = (YoolooKarte) empfangeVomClient();
 							if (allPlayedCards.size() >= 10 || allPlayedCards.contains(neueKarte.getWert()) || neueKarte.getWert() < YoolooKartenspiel.minKartenWert || neueKarte.getWert() > YoolooKartenspiel.maxKartenWert) {
+								neueKarte.setWert(0);
 								if (!cheaterList.contains(meinSpieler.getName())) cheaterList.add(meinSpieler.getName());
 							} else {
+								if (cheaterList.contains(meinSpieler.getName())) neueKarte.setWert(0);
 								allPlayedCards.add(neueKarte.getWert());
 							}
 							System.out.println("[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);

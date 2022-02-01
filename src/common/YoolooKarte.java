@@ -27,6 +27,9 @@ public class YoolooKarte implements Serializable {
 	public int getWert() {
 		return wert;
 	}
+	public void setWert(Integer wert) {
+		this.wert = wert;
+	}
 
 	@Override
 	public String toString() {
