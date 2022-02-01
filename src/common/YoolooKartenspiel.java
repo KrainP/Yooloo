@@ -6,6 +6,7 @@ package common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 
@@ -102,7 +103,15 @@ public class YoolooKartenspiel {
 	// nur fuer Simulation / local
 	public void spielerSortierungFestlegen() {
 		for (int i = 0; i < spielerliste.size(); i++) {
-			spielerliste.get(i).sortierungFestlegen();
+			int[] arrayZahl = {1,2,3};
+			int rnd = new Random().nextInt(arrayZahl.length);
+			if (arrayZahl[rnd] == 1){
+				spielerliste.get(i).sortierungFestlegen();
+			} else if (arrayZahl[rnd] == 2){
+				spielerliste.get(i).sortierungHochzählen();
+			} else if (arrayZahl[rnd] == 3){
+				spielerliste.get(i).sortierungRunterzählen();
+			}
 		}
 	}
 
