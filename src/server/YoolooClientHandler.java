@@ -174,6 +174,7 @@ public class YoolooClientHandler extends Thread {
 			YoolooLogger.error(e.toString());
 			e.printStackTrace();
 		} catch (Exception e) {
+			YoolooLogger.error(e.toString());
 			e.printStackTrace();
 		} finally {
 			YoolooLogger.info("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
@@ -186,6 +187,7 @@ public class YoolooClientHandler extends Thread {
 		try {
 			this.handleClientJSON(meinSpieler.getName());
 		} catch (Exception e) {
+			YoolooLogger.error(e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -230,6 +232,7 @@ public class YoolooClientHandler extends Thread {
 				}
 			}
 		} catch (IOException e) {
+			YoolooLogger.error(e.toString());
 			e.printStackTrace();
 		}
 
@@ -274,10 +277,13 @@ public class YoolooClientHandler extends Thread {
 			antwortObject = ois.readObject();
 			return antwortObject;
 		} catch (EOFException eofe) {
+			YoolooLogger.error(eofe.toString());
 			eofe.printStackTrace();
 		} catch (ClassNotFoundException cnfe) {
+			YoolooLogger.error(cnfe.toString());
 			cnfe.printStackTrace();
 		} catch (IOException e) {
+			YoolooLogger.error(e.toString());
 			e.printStackTrace();
 		}
 		return null;
@@ -308,6 +314,7 @@ public class YoolooClientHandler extends Thread {
 				YoolooLogger.info("[ClientHandler" + clientHandlerId + "] warte " + delay + " ms ");
 				Thread.sleep(delay);
 			} catch (InterruptedException e) {
+				YoolooLogger.error(e.toString());
 				e.printStackTrace();
 			}
 			aktuellerStich = session.stichFuerRundeAuswerten(stichNummer);
