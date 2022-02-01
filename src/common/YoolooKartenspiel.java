@@ -84,13 +84,17 @@ public class YoolooKartenspiel {
 	 * @return
 	 */
 	public YoolooSpieler spielerRegistrieren(YoolooSpieler neuerSpieler) {
-		Kartenfarbe[] farben = Kartenfarbe.values();
-		neuerSpieler.setSpielfarbe(farben[neuerSpieler.getClientHandlerId()]);
-		YoolooKarte[] kartenDesSpielers = spielkarten[neuerSpieler.getClientHandlerId()];
-		neuerSpieler.setAktuelleSortierung(kartenDesSpielers);
-		this.spielerliste.add(neuerSpieler); // nur fuer Simulation noetig!
-		System.out.println("Debug; Spielerobject registriert als : " + neuerSpieler);
-		return neuerSpieler;
+		if(this.spielerliste.stream().anyMatch(spieler -> spieler.getName().equals(neuerSpieler.getName()))) {
+			return null;
+		} else {
+			Kartenfarbe[] farben = Kartenfarbe.values();
+			neuerSpieler.setSpielfarbe(farben[neuerSpieler.getClientHandlerId()]);
+			YoolooKarte[] kartenDesSpielers = spielkarten[neuerSpieler.getClientHandlerId()];
+			neuerSpieler.setAktuelleSortierung(kartenDesSpielers);
+			this.spielerliste.add(neuerSpieler); // nur fuer Simulation noetig!
+			System.out.println("Debug; Spielerobject registriert als : " + neuerSpieler);
+			return neuerSpieler;
+		}
 	}
 
 	@Override
