@@ -57,7 +57,10 @@ public class YoolooClient {
 			while (clientState != ClientState.CLIENTSTATE_DISCONNECTED && ois != null && oos != null) {
 				// 1. Schritt Kommado empfangen
 				ServerMessage kommandoMessage = empfangeKommando();
-				System.out.println("[id-x]ClientStatus: " + clientState + "] " + kommandoMessage.toString());
+				if (kommandoMessage.getServerMessageType().equals(ServerMessage.ServerMessageType.CHEATER_DETECTED)) {
+					if (kommandoMessage.getMessage() != null) System.out.println("Die folgenden Spieler haben gecheatet: " + kommandoMessage.getMessage());
+					else System.out.println("Alle Spieler haben fair gespielt!");
+				} else System.out.println("[id-x]ClientStatus: " + clientState + "] " + kommandoMessage.toString());
 				// 2. Schritt ClientState ggfs aktualisieren (fuer alle neuen Kommandos)
 				ClientState newClientState = kommandoMessage.getNextClientState();
 				if (newClientState != null) {
@@ -103,7 +106,7 @@ public class YoolooClient {
 					           // basic version: wechsel zu ClientState Disconnected thread beenden
 				case SERVERMESSAGE_CHANGE_STATE:
 				break ;
-				
+
 				default:
 					break;
 				}
