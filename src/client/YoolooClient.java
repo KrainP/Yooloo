@@ -22,7 +22,7 @@ import java.util.Scanner;
 
 public class YoolooClient {
 
-	private String serverHostname = "localhost";
+	private String serverHostname = "";
 	private int serverPort = 44137;
 	private Socket serverSocket = null;
 	private ObjectInputStream ois = null;
@@ -41,6 +41,7 @@ public class YoolooClient {
 	public YoolooClient(String serverHostname, int serverPort) {
 		super();
 		this.serverPort = serverPort;
+		this.serverHostname = serverHostname;
 		clientState = ClientState.CLIENTSTATE_NULL;
 	}
 
