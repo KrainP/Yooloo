@@ -7,6 +7,7 @@ package common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import common.YoolooKartenspiel.Kartenfarbe;
 
@@ -64,6 +65,23 @@ public class YoolooSpieler implements Serializable {
 			}
 			neueSortierung[neuerIndex] = aktuelleSortierung[i];
 			// System.out.println(i+ ". neuerIndex: "+neuerIndex);
+		}
+		aktuelleSortierung = neueSortierung;
+	}
+
+	public void sortierungRandom() {
+		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
+		int neuerIndex = 0;
+		for (int i = 0; i < neueSortierung.length; i++) {
+			if (i < 3) {
+				neuerIndex = (int) (Math.random()* 4);
+			} else if (i > 3) {
+				neuerIndex = (int) (Math.random()* 3)+4;
+			} else if (i < 7) {
+				neuerIndex = (int) (Math.random()* 2)+8;
+			}
+				neueSortierung[neuerIndex] = aktuelleSortierung[i];
+
 		}
 		aktuelleSortierung = neueSortierung;
 	}
