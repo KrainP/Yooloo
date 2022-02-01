@@ -76,7 +76,7 @@ public class YoolooServer {
 					clientHandlerList.add(clientHandler);
 					YoolooLogger.info("[YoolooServer] Anzahl verbundene Spieler: " + clientHandlerList.size());
 				} catch (IOException e) {
-					YoolooLogger.info("Client Verbindung gescheitert");
+					YoolooLogger.error("Client Verbindung gescheitert");
 					e.printStackTrace();
 				}
 
@@ -99,7 +99,7 @@ public class YoolooServer {
 				}
 			}
 		} catch (IOException e1) {
-			YoolooLogger.info("ServerSocket nicht gebunden");
+			YoolooLogger.error("ServerSocket nicht gebunden");
 			serverAktiv = false;
 			e1.printStackTrace();
 		}

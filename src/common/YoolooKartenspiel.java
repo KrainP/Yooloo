@@ -133,12 +133,12 @@ public class YoolooKartenspiel {
 		int limitWert = maxKartenWert + 1;
 		int maxWert = 0;
 		int anzahlKartenMitMaxWert = 0;
-		String message = "";
+		StringBuilder str = new StringBuilder();
 		for (int i = 0; i < karten.length; i++) {
 
-			message+= i + ":" + karten[i].getWert() + " ";
+			str.append(i + ":" + karten[i].getWert() + " ");
 		}
-		YoolooLogger.info(message);
+		YoolooLogger.info(str.toString());
 		while (anzahlKartenMitMaxWert != 1) {
 			maxWert = 0;
 			for (int i = 0; i < karten.length; i++) {
@@ -171,9 +171,9 @@ public class YoolooKartenspiel {
 
 	public int berechneGewinnerIndex(YoolooKarte[] karten) {
 		int maxwert = 0;
-		String message = "";
+		StringBuilder str = new StringBuilder();
 		for (int i = 0; i < karten.length; i++) {
-			message += i + ":" + karten[i].getWert() + " ";
+			str.append(i + ":" + karten[i].getWert() + " ");
 			if (maxwert < karten[i].getWert())
 				maxwert = karten[i].getWert();
 		}
@@ -191,7 +191,7 @@ public class YoolooKartenspiel {
 				gewinnerIndex = -1;
 
 			} else {
-				YoolooLogger.info(message + "gewinnerIndex: " + gewinnerIndex);
+				YoolooLogger.info(str.toString() + "gewinnerIndex: " + gewinnerIndex);
 				return gewinnerIndex;
 			}
 		}

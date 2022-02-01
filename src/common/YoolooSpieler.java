@@ -41,9 +41,8 @@ public class YoolooSpieler implements Serializable {
 	}
 
 	public int erhaeltPunkte(int neuePunkte) {
-		String message = "";
 		YoolooLogger.info(name + " hat " + punkte + " P - erhaelt " + neuePunkte + " P - neue Summe: ");
-		message += name + " hat " + punkte + " P - erhaelt " + neuePunkte + " P - neue Summe: ";
+		String message = name + " hat " + punkte + " P - erhaelt " + neuePunkte + " P - neue Summe: ";
 		this.punkte = this.punkte + neuePunkte;
 		YoolooLogger.info(message + this.punkte);
 		return this.punkte;

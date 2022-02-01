@@ -8,18 +8,18 @@ import java.util.logging.*;
 public class YoolooLogger
 {
     static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    FileHandler fileHandler = null;
-    Handler handler = new ConsoleHandler();
+    static FileHandler fileHandler = null;
+    //Handler handler = new ConsoleHandler();
 
-    public  YoolooLogger()
+    static
     {
         File directory = new File("./logs/");
         logger.setLevel(Level.ALL);
-        handler.setLevel(Level.ALL);
+        //handler.setLevel(Level.ALL);
 
         if (!directory.exists())
         {
-            directory.mkdir();
+            directory.mkdirs();
         }
 
         try
