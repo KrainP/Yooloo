@@ -23,6 +23,7 @@ public class ServerMessage implements Serializable {
 	private ClientState nextClientState;
 	private ServerMessageResult serverMessageResult; // noch nicht genutzt
 	private int paramInt; // fuer (sequenzielle) Durchfuehrung von wiederholten Operationen
+	private String message;
 
 	/**
 	 * Serverseitig durch ClientHandler generierte Nachrichtencodes zur Steuerung
@@ -35,7 +36,8 @@ public class ServerMessage implements Serializable {
 		SERVERMESSAGE_SORT_CARD_SET, // Spieler legen Ihre Sortierung fest
 		SERVERMESSAGE_SEND_CARD, // Karten werden an Spieler ausgegeben
 		SERVERMESSAGE_RESULT_SET, // Stich wird an Spieler zurueckgegeben
-		SERVERMESSAGE_CHANGE_STATE // Manuelle Steuerung des Clienstatus
+		SERVERMESSAGE_CHANGE_STATE, // Manuelle Steuerung des Clienstatus
+		CHEATER_DETECTED
 
 	};
 
@@ -63,6 +65,15 @@ public class ServerMessage implements Serializable {
 		this.nextClientState = nextState;
 		this.serverMessageResult = result;
 		this.paramInt = -1;
+	}
+
+	public ServerMessage(ServerMessageType type, ClientState nextState, ServerMessageResult result, String message) {
+		super();
+		this.serverMessageType = type;
+		this.nextClientState = nextState;
+		this.serverMessageResult = result;
+		this.paramInt = -1;
+		this.message = message;
 	}
 
 	public ServerMessage(ServerMessageType type, ClientState nextState, ServerMessageResult result, int paramInt) {
@@ -103,6 +114,10 @@ public class ServerMessage implements Serializable {
 
 	public void setParamInt(int paramInt) {
 		this.paramInt = paramInt;
+	}
+
+	public String getMessage() {
+		return message;
 	}
 
 	@Override
