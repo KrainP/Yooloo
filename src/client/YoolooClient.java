@@ -69,7 +69,7 @@ public class YoolooClient {
 				}
 				// 3. Schritt Kommandospezifisch reagieren
 				switch (kommandoMessage.getServerMessageType()) {
-				case SERVERMESSAGE_SENDLOGIN: case SERVERMESSAGE_SENDLOGIN_AGAIN:
+				case SERVERMESSAGE_SENDLOGIN:
 					// Server fordert Useridentifikation an
 					// Falls User local noch nicht bekannt wird er bestimmt
 					if (newLogin == null || clientState == ClientState.CLIENTSTATE_LOGIN) {
