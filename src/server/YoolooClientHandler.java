@@ -115,6 +115,7 @@ public class YoolooClientHandler extends Thread {
 							YoolooKarte neueKarte = (YoolooKarte) empfangeVomClient();
 							if (allPlayedCards.size() >= 10 || allPlayedCards.contains(neueKarte.getWert()) || neueKarte.getWert() < YoolooKartenspiel.minKartenWert || neueKarte.getWert() > YoolooKartenspiel.maxKartenWert) {
 								neueKarte.setWert(0);
+								meinSpieler.setPunkte(0);
 								if (!cheaterList.contains(meinSpieler.getName())) cheaterList.add(meinSpieler.getName());
 							} else {
 								if (cheaterList.contains(meinSpieler.getName())) neueKarte.setWert(0);
@@ -123,7 +124,7 @@ public class YoolooClientHandler extends Thread {
 							YoolooLogger.info("[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);
 							YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
 							// Punkte fuer gespielten Stich ermitteln
-							if (currentstich.getSpielerNummer() == clientHandlerId) {
+							if (currentstich.getSpielerNummer() == clientHandlerId && neueKarte.getWert() != 0) {
 								meinSpieler.erhaeltPunkte(stichNummer + 1);
 							}
 							YoolooLogger.info("[ClientHandler" + clientHandlerId + "] Stich " + stichNummer
