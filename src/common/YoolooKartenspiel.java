@@ -5,9 +5,9 @@
 package common;
 
 import utils.YoolooLogger;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 
@@ -86,13 +86,17 @@ public class YoolooKartenspiel {
 	 * @return
 	 */
 	public YoolooSpieler spielerRegistrieren(YoolooSpieler neuerSpieler) {
-		Kartenfarbe[] farben = Kartenfarbe.values();
-		neuerSpieler.setSpielfarbe(farben[neuerSpieler.getClientHandlerId()]);
-		YoolooKarte[] kartenDesSpielers = spielkarten[neuerSpieler.getClientHandlerId()];
-		neuerSpieler.setAktuelleSortierung(kartenDesSpielers);
-		this.spielerliste.add(neuerSpieler); // nur fuer Simulation noetig!
-		YoolooLogger.debug("Debug; Spielerobject registriert als : " + neuerSpieler);
-		return neuerSpieler;
+		if(this.spielerliste.stream().anyMatch(spieler -> spieler.getName().equals(neuerSpieler.getName()))) {
+			return null;
+		} else {
+			Kartenfarbe[] farben = Kartenfarbe.values();
+			neuerSpieler.setSpielfarbe(farben[neuerSpieler.getClientHandlerId()]);
+			YoolooKarte[] kartenDesSpielers = spielkarten[neuerSpieler.getClientHandlerId()];
+			neuerSpieler.setAktuelleSortierung(kartenDesSpielers);
+			this.spielerliste.add(neuerSpieler); // nur fuer Simulation noetig!
+			YoolooLogger.debug("Debug; Spielerobject registriert als : " + neuerSpieler);
+			return neuerSpieler;
+		}
 	}
 
 	@Override
@@ -104,7 +108,15 @@ public class YoolooKartenspiel {
 	// nur fuer Simulation / local
 	public void spielerSortierungFestlegen() {
 		for (int i = 0; i < spielerliste.size(); i++) {
-			spielerliste.get(i).sortierungFestlegen();
+			int[] arrayZahl = {1,2,3};
+			int rnd = new Random().nextInt(arrayZahl.length);
+			if (arrayZahl[rnd] == 1){
+				spielerliste.get(i).sortierungFestlegen();
+			} else if (arrayZahl[rnd] == 2){
+				spielerliste.get(i).sortierungHochzählen();
+			} else if (arrayZahl[rnd] == 3){
+				spielerliste.get(i).sortierungRunterzählen();
+			}
 		}
 	}
 
@@ -135,7 +147,6 @@ public class YoolooKartenspiel {
 		int anzahlKartenMitMaxWert = 0;
 		StringBuilder str = new StringBuilder();
 		for (int i = 0; i < karten.length; i++) {
-
 			str.append(i + ":" + karten[i].getWert() + " ");
 		}
 		YoolooLogger.info(str.toString());

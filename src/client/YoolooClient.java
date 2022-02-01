@@ -4,13 +4,6 @@
 
 package client;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ConnectException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
 import common.LoginMessage;
 import common.YoolooKartenspiel;
 import common.YoolooSpieler;
@@ -19,9 +12,17 @@ import messages.ClientMessage;
 import messages.ClientMessage.ClientMessageType;
 import messages.ServerMessage;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ConnectException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
 public class YoolooClient {
 
-	private String serverHostname = "localhost";
+	private String serverHostname = "";
 	private int serverPort = 44137;
 	private Socket serverSocket = null;
 	private ObjectInputStream ois = null;
@@ -29,7 +30,6 @@ public class YoolooClient {
 
 	private ClientState clientState = ClientState.CLIENTSTATE_NULL;
 
-	private String spielerName = "Name" + (System.currentTimeMillis() + "").substring(6);
 	private LoginMessage newLogin = null;
 	private YoolooSpieler meinSpieler;
 	private YoolooStich[] spielVerlauf = null;
@@ -41,6 +41,7 @@ public class YoolooClient {
 	public YoolooClient(String serverHostname, int serverPort) {
 		super();
 		this.serverPort = serverPort;
+		this.serverHostname = serverHostname;
 		clientState = ClientState.CLIENTSTATE_NULL;
 	}
 
@@ -73,13 +74,11 @@ public class YoolooClient {
 					// Falls User local noch nicht bekannt wird er bestimmt
 					if (newLogin == null || clientState == ClientState.CLIENTSTATE_LOGIN) {
 						// TODO Klasse LoginMessage erweiteren um Interaktives ermitteln des
-						// Spielernames, GameModes, ...)
-						newLogin = eingabeSpielerDatenFuerLogin(); //Dummy aufruf
-						newLogin = new LoginMessage(spielerName);
+						newLogin = eingabeSpielerDatenFuerLogin();
 					}
 					// Client meldet den Spieler an den Server
 					oos.writeObject(newLogin);
-					System.out.println("[id-x]ClientStatus: " + clientState + "] : LoginMessage fuer  " + spielerName
+					System.out.println("[id-x]ClientStatus: " + clientState + "] : LoginMessage fuer  " + newLogin.getSpielerName()
 							+ " an server gesendet warte auf Spielerdaten");
 					empfangeSpieler();
 					// ausgabeKartenSet();
@@ -209,8 +208,15 @@ public class YoolooClient {
 	}
 
 	private LoginMessage eingabeSpielerDatenFuerLogin() {
-		// TODO Spielername, GameMode und ggfs mehr ermitteln
-		return null;
+		LoginMessage loginMessage = new LoginMessage();
+
+		System.out.println("Usernamen eingeben: ");
+		Scanner scanner = new Scanner(System.in);
+		String username = scanner.nextLine();
+
+		loginMessage.setSpielerName(username);
+
+		return loginMessage;
 	}
 
 	public void ausgabeKartenSet() {

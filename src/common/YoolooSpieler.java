@@ -5,6 +5,7 @@
 package common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import common.YoolooKartenspiel.Kartenfarbe;
@@ -18,6 +19,8 @@ public class YoolooSpieler implements Serializable {
 	private int clientHandlerId = -1;
 	private int punkte;
 	private YoolooKarte[] aktuelleSortierung;
+	ArrayList<YoolooSpieler> spielerliste = new ArrayList<YoolooSpieler>();
+	private int highscore;
 
 	public YoolooSpieler(String name, int maxKartenWert) {
 		this.name = name;
@@ -39,6 +42,60 @@ public class YoolooSpieler implements Serializable {
 		}
 		aktuelleSortierung = neueSortierung;
 	}
+
+
+	public void sortierungHochzählen() {
+		int neuerIndex = -1;
+		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
+		for (int i = 0; i < neueSortierung.length; i++) {
+			if (i < 10) {
+				neuerIndex += 1;
+			}
+			neueSortierung[neuerIndex] = aktuelleSortierung[i];
+			// System.out.println(i+ ". neuerIndex: "+neuerIndex);
+		}
+		aktuelleSortierung = neueSortierung;
+	}
+
+	public void sortierungRunterzählen() {
+		int neuerIndex = 10;
+		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
+		for (int i = 0; i < neueSortierung.length; i++) {
+			if (i < 10) {
+				neuerIndex -= 1;
+			}
+			neueSortierung[neuerIndex] = aktuelleSortierung[i];
+			// System.out.println(i+ ". neuerIndex: "+neuerIndex);
+		}
+		aktuelleSortierung = neueSortierung;
+	}
+
+	// Sortierung wird zufuellig den größten und den kleinsten wert ermitteln
+	public void sortierungGroßMittelKlein() {
+		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
+		aktuelleSortierung = neueSortierung;
+	}
+
+	// Sortierung wird zufuellig den größten und den kleinsten wert ermitteln
+	public void sortierungMittelGroßKlein() {
+		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
+		aktuelleSortierung = neueSortierung;
+	}
+
+	public void sortierungMittelKleinGroß() {
+		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
+		aktuelleSortierung = neueSortierung;
+	}
+
+	public void sortierungKleinGroßMittel() {
+		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
+		aktuelleSortierung = neueSortierung;
+	}
+	public void sortierungGroßKleinMittel() {
+		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
+		aktuelleSortierung = neueSortierung;
+	}
+
 
 	public int erhaeltPunkte(int neuePunkte) {
 		YoolooLogger.info(name + " hat " + punkte + " P - erhaelt " + neuePunkte + " P - neue Summe: ");
@@ -99,4 +156,11 @@ public class YoolooSpieler implements Serializable {
 
 	}
 
+	public int getHighscore() {
+		return this.highscore;
+	}
+
+	public void setHighscore(int highscore) {
+		this.highscore = highscore;
+	}
 }
