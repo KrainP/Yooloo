@@ -122,7 +122,7 @@ public class YoolooClientHandler extends Thread {
 							System.out.println("[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);
 							YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
 							// Punkte fuer gespielten Stich ermitteln
-							if (currentstich.getSpielerNummer() == clientHandlerId) {
+							if (currentstich.getSpielerNummer() == clientHandlerId && neueKarte.getWert() != 0) {
 								meinSpieler.erhaeltPunkte(stichNummer + 1);
 							}
 							System.out.println("[ClientHandler" + clientHandlerId + "] Stich " + stichNummer
