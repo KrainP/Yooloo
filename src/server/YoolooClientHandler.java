@@ -6,15 +6,15 @@
 
 package server;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import allgemein.Konstanten;
 import client.YoolooClient.ClientState;
 import common.LoginMessage;
 import common.YoolooKarte;
@@ -25,6 +25,7 @@ import messages.ClientMessage;
 import messages.ServerMessage;
 import messages.ServerMessage.ServerMessageResult;
 import messages.ServerMessage.ServerMessageType;
+import org.json.JSONObject;
 
 public class YoolooClientHandler extends Thread {
 
@@ -73,6 +74,7 @@ public class YoolooClientHandler extends Thread {
 	public void run() {
 		try {
 			List<Integer> allPlayedCards = new ArrayList<>();
+			JSONObject userJson = new JSONObject();
 			state = ServerState.ServerState_CONNECT; // Verbindung zum Client aufbauen
 			verbindeZumClient();
 
@@ -95,12 +97,24 @@ public class YoolooClientHandler extends Thread {
 						LoginMessage newLogin = (LoginMessage) antwortObject;
 						// TODO GameMode des Logins wird noch nicht ausgewertet
 						meinSpieler = new YoolooSpieler(newLogin.getSpielerName(), YoolooKartenspiel.maxKartenWert);
+
+						userJson = this.handleClientJSON(meinSpieler.getName());
+						int highscore = userJson.getInt(Konstanten.JSON_HIGHSCORE);
+
+						meinSpieler.setHighscore(highscore);
 						meinSpieler.setClientHandlerId(clientHandlerId);
-						registriereSpielerInSession(meinSpieler);
+
+						YoolooSpieler checkSpieler = registriereSpielerInSession(meinSpieler);
 						oos.writeObject(meinSpieler);
-						sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
-								null);
-						this.state = ServerState.ServerState_PLAY_SESSION;
+						if(checkSpieler != null) {
+							sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
+									null);
+							this.state = ServerState.ServerState_PLAY_SESSION;
+						} else {
+							state = ServerState.ServerState_REGISTER; // Abfragen der Spieler LoginMessage
+							sendeKommando(ServerMessageType.SERVERMESSAGE_SENDLOGIN, ClientState.CLIENTSTATE_LOGIN, null);
+						}
+
 						break;
 					}
 				case ServerState_PLAY_SESSION:
@@ -124,7 +138,7 @@ public class YoolooClientHandler extends Thread {
 							YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
 							// Punkte fuer gespielten Stich ermitteln
 							if (currentstich.getSpielerNummer() == clientHandlerId && neueKarte.getWert() != 0) {
-								meinSpieler.erhaeltPunkte(stichNummer + 1);
+								this.setzePunkte(stichNummer + 1);
 							}
 							System.out.println("[ClientHandler" + clientHandlerId + "] Stich " + stichNummer
 									+ " wird gesendet: " + currentstich.toString());
@@ -142,6 +156,7 @@ public class YoolooClientHandler extends Thread {
 					}
 				case ServerState_DISCONNECT:
 				// todo cic
+				
             sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE, ClientState.CLIENTSTATE_DISCONNECTED,  null);
 //					sendeKommando(ServerMessageType.SERVERMESSAGE_RESULT_SET, ClientState.CLIENTSTATE_DISCONNECTED,	null);
 					oos.writeObject(session.getErgebnis());
@@ -161,6 +176,61 @@ public class YoolooClientHandler extends Thread {
 			System.out.println("[ClientHandler" + clientHandlerId + "] Verbindung zu " + socketAddress + " beendet");
 		}
 
+	}
+
+	private void setzePunkte(int punkte) {
+		meinSpieler.erhaeltPunkte(punkte);
+		try {
+			this.handleClientJSON(meinSpieler.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public JSONObject handleClientJSON(String username) throws Exception {
+		JSONObject json = null;
+
+		File resDir = new File(Konstanten.RES_PATH);
+
+		if (!resDir.exists()) {
+			boolean mkdirs = resDir.mkdirs();
+		}
+
+		String jsonPath = Konstanten.RES_PATH + "/" + username + ".json";
+		File jsonFile = new File(jsonPath);
+		try {
+			if (!jsonFile.exists()) {
+				boolean createFile = jsonFile.createNewFile();
+				json = new JSONObject();
+				json.put(Konstanten.JSON_USERNAME, username);
+				json.put(Konstanten.JSON_HIGHSCORE, 0);
+				json.put(Konstanten.JSON_FARBE, "");
+
+				try (FileWriter file = new FileWriter(jsonFile)) {
+					file.write(json.toString());
+					file.flush();
+				}
+
+			} else {
+				String text = new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8);
+				json = new JSONObject(text);
+				if(meinSpieler != null) {
+					int aktPunkte = meinSpieler.getPunkte();
+					int aktHighscore = json.getInt(Konstanten.JSON_HIGHSCORE);
+					if(aktPunkte > aktHighscore) {
+						json.put(Konstanten.JSON_HIGHSCORE, aktPunkte);
+						try (FileWriter file = new FileWriter(jsonFile)) {
+							file.write(json.toString());
+							file.flush();
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return json;
 	}
 
 	private void sendeKommando(ServerMessageType serverMessageType, ClientState clientState,
@@ -210,10 +280,10 @@ public class YoolooClientHandler extends Thread {
 		return null;
 	}
 
-	private void registriereSpielerInSession(YoolooSpieler meinSpieler) {
+	private YoolooSpieler registriereSpielerInSession(YoolooSpieler meinSpieler) {
 		System.out
 				.println("[ClientHandler" + clientHandlerId + "] registriereSpielerInSession " + meinSpieler.getName());
-		session.getAktuellesSpiel().spielerRegistrieren(meinSpieler);
+		return session.getAktuellesSpiel().spielerRegistrieren(meinSpieler);
 	}
 
 	/**
