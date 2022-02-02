@@ -26,6 +26,7 @@ import messages.ServerMessage;
 import messages.ServerMessage.ServerMessageResult;
 import messages.ServerMessage.ServerMessageType;
 import org.json.JSONObject;
+import utils.YoolooJsonHandler;
 import utils.YoolooLogger;
 
 public class YoolooClientHandler extends Thread {
@@ -44,6 +45,8 @@ public class YoolooClientHandler extends Thread {
 	private YoolooSession session;
 	private YoolooSpieler meinSpieler = null;
 	private int clientHandlerId;
+
+	private YoolooJsonHandler jsonHandler;
 
 	public static List<String> cheaterList = new ArrayList<>();
 
@@ -99,7 +102,10 @@ public class YoolooClientHandler extends Thread {
 						// TODO GameMode des Logins wird noch nicht ausgewertet
 						meinSpieler = new YoolooSpieler(newLogin.getSpielerName(), YoolooKartenspiel.maxKartenWert);
 
-						userJson = this.handleClientJSON(meinSpieler.getName());
+						// initialize JSON handler
+						jsonHandler = new YoolooJsonHandler();
+						userJson = jsonHandler.holeClientJSON(meinSpieler);
+
 						int highscore = userJson.getInt(Konstanten.JSON_HIGHSCORE);
 
 						meinSpieler.setHighscore(highscore);
@@ -167,12 +173,6 @@ public class YoolooClientHandler extends Thread {
 					YoolooLogger.info("Undefinierter Serverstatus - tue mal nichts!");
 				}
 			}
-		} catch (EOFException e) {
-			YoolooLogger.error(e.toString());
-			e.printStackTrace();
-		} catch (IOException e) {
-			YoolooLogger.error(e.toString());
-			e.printStackTrace();
 		} catch (Exception e) {
 			YoolooLogger.error(e.toString());
 			e.printStackTrace();
@@ -182,61 +182,19 @@ public class YoolooClientHandler extends Thread {
 
 	}
 
+	/**
+	 * Setzt die Punkte für den jeweiligen Spieler. <br>
+	 * Bezieht sich ebenso auf die JSON Daten
+	 * @param punkte neue zu setzende Punktanzahl
+	 */
 	private void setzePunkte(int punkte) {
 		meinSpieler.erhaeltPunkte(punkte);
 		try {
-			this.handleClientJSON(meinSpieler.getName());
+			jsonHandler.aktualisierePunkte(meinSpieler);
 		} catch (Exception e) {
 			YoolooLogger.error(e.toString());
 			e.printStackTrace();
 		}
-	}
-
-	public JSONObject handleClientJSON(String username) throws Exception {
-		JSONObject json = null;
-
-		File resDir = new File(Konstanten.RES_PATH);
-
-		if (!resDir.exists()) {
-			boolean mkdirs = resDir.mkdirs();
-		}
-
-		String jsonPath = Konstanten.RES_PATH + "/" + username + ".json";
-		File jsonFile = new File(jsonPath);
-		try {
-			if (!jsonFile.exists()) {
-				boolean createFile = jsonFile.createNewFile();
-				json = new JSONObject();
-				json.put(Konstanten.JSON_USERNAME, username);
-				json.put(Konstanten.JSON_HIGHSCORE, 0);
-				json.put(Konstanten.JSON_FARBE, "");
-
-				try (FileWriter file = new FileWriter(jsonFile)) {
-					file.write(json.toString());
-					file.flush();
-				}
-
-			} else {
-				String text = new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8);
-				json = new JSONObject(text);
-				if(meinSpieler != null) {
-					int aktPunkte = meinSpieler.getPunkte();
-					int aktHighscore = json.getInt(Konstanten.JSON_HIGHSCORE);
-					if(aktPunkte > aktHighscore) {
-						json.put(Konstanten.JSON_HIGHSCORE, aktPunkte);
-						try (FileWriter file = new FileWriter(jsonFile)) {
-							file.write(json.toString());
-							file.flush();
-						}
-					}
-				}
-			}
-		} catch (IOException e) {
-			YoolooLogger.error(e.toString());
-			e.printStackTrace();
-		}
-
-		return json;
 	}
 
 	private void sendeKommando(ServerMessageType serverMessageType, ClientState clientState,
