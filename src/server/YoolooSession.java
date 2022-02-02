@@ -8,6 +8,7 @@ import common.YoolooKarte;
 import common.YoolooKartenspiel;
 import common.YoolooStich;
 import server.YoolooServer.GameMode;
+import utils.YoolooLogger;
 
 public class YoolooSession {
 
@@ -52,7 +53,7 @@ public class YoolooSession {
 				neuerStich.setStichNummer(stichNummer);
 				neuerStich.setSpielerNummer(aktuellesSpiel.berechneGewinnerIndex(karten));
 				ausgewerteteStiche[stichNummer] = neuerStich;
-				System.out.println("Stich ausgewertet:" + neuerStich.toString());
+				YoolooLogger.info("Stich ausgewertet:" + neuerStich.toString());
 			}
 		}
 		return ausgewerteteStiche[stichNummer];

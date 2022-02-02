@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 import common.YoolooKartenspiel.Kartenfarbe;
+import utils.YoolooLogger;
 
 public class YoolooSpieler implements Serializable {
 
@@ -82,9 +83,10 @@ public class YoolooSpieler implements Serializable {
 	}
 
 	public int erhaeltPunkte(int neuePunkte) {
-		System.out.print(name + " hat " + punkte + " P - erhaelt " + neuePunkte + " P - neue Summe: ");
+		YoolooLogger.info(name + " hat " + punkte + " P - erhaelt " + neuePunkte + " P - neue Summe: ");
+		String message = name + " hat " + punkte + " P - erhaelt " + neuePunkte + " P - neue Summe: ";
 		this.punkte = this.punkte + neuePunkte;
-		System.out.println(this.punkte);
+		YoolooLogger.info(message + this.punkte);
 		return this.punkte;
 	}
 
@@ -135,7 +137,7 @@ public class YoolooSpieler implements Serializable {
 	}
 
 	public void stichAuswerten(YoolooStich stich) {
-		System.out.println(stich.toString());
+		YoolooLogger.info(stich.toString());
 
 	}
 
