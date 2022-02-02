@@ -41,7 +41,7 @@ public class YoolooSpieler implements Serializable {
 		List<YoolooKarte> min = new ArrayList<>();
 		List<YoolooKarte> mid = new ArrayList<>();
 		List<YoolooKarte> max = new ArrayList<>();
-
+		// hier füllen wir die listen
 		for (int i = 0; i < this.aktuelleSortierung.length; i++) {
 			if (i < 3) {
 				min.add(new YoolooKarte(Kartenfarbe.Blau, i + 1));
@@ -51,6 +51,7 @@ public class YoolooSpieler implements Serializable {
 				max.add(new YoolooKarte(Kartenfarbe.Blau, i + 1));
 			}
 		}
+
 		switch(userInput) {
 			case 1: aktuelleSortierung = getShuffleList(mid, max, min);
 				break;
@@ -65,15 +66,18 @@ public class YoolooSpieler implements Serializable {
 	}
 	public YoolooKarte[] getShuffleList(List<YoolooKarte> list1, List<YoolooKarte> list2, List<YoolooKarte> list3) {
 		List<YoolooKarte> ret = new ArrayList<>();
+		//Die Listen werte werden gemischt
 		Collections.shuffle(list1);
 		Collections.shuffle(list2);
 		Collections.shuffle(list3);
 
+		//Zusammenfügen der Listen
 		ret.addAll(list1);
 		ret.addAll(list2);
 		ret.addAll(list3);
 
 		int count = 0;
+		//umwandlung in Array, weil das Programm es so braucht
 		YoolooKarte[] result = new YoolooKarte[ret.size()];
 		for (YoolooKarte card : ret) {
 			result[count] = card;

@@ -24,7 +24,7 @@ public class YoolooClient {
 	private Socket serverSocket = null;
 	private ObjectInputStream ois = null;
 	private ObjectOutputStream oos = null;
-
+	public static int userInput = 0;
 	private ClientState clientState = ClientState.CLIENTSTATE_NULL;
 
 	private LoginMessage newLogin = null;
@@ -82,7 +82,7 @@ public class YoolooClient {
 					break;
 				case SERVERMESSAGE_SORT_CARD_SET:
 					// sortieren Karten
-					meinSpieler.sortierungFestlegen(YoolooKartenspiel.userInput);
+					meinSpieler.sortierungFestlegen(spielerSortierungFestlegen());
 					ausgabeKartenSet();
 					// ggfs. Spielverlauf löschen
 					spielVerlauf = new YoolooStich[YoolooKartenspiel.maxKartenWert];
@@ -238,5 +238,18 @@ public class YoolooClient {
 		CLIENTSTATE_DISCONNECT, // Verbindung soll getrennt werden
 		CLIENTSTATE_DISCONNECTED // Vebindung wurde getrennt
 	};
+
+
+	public int spielerSortierungFestlegen() {
+		System.out.println("Wähle Optionen und notiere die Nummer: ");
+		System.out.println("1. mid, max, min");
+		System.out.println("2. min, max, mid");
+		System.out.println("3. min, mid, max");
+		System.out.println("4. Cheat mode");
+		Scanner scan = new Scanner(System.in);
+		userInput = scan.nextInt();
+		return userInput;
+
+	}
 
 }
