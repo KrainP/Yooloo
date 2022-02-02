@@ -136,6 +136,7 @@ public class YoolooClientHandler extends Thread {
 							if (allPlayedCards.size() >= 10 || allPlayedCards.contains(neueKarte.getWert()) || neueKarte.getWert() < YoolooKartenspiel.minKartenWert || neueKarte.getWert() > YoolooKartenspiel.maxKartenWert) {
 								neueKarte.setWert(0);
 								meinSpieler.setPunkte(0);
+								YoolooLogger.info(meinSpieler.getName() + " hat gecheatet!");
 								if (!cheaterList.contains(meinSpieler.getName())) cheaterList.add(meinSpieler.getName());
 							} else {
 								if (cheaterList.contains(meinSpieler.getName())) neueKarte.setWert(0);
@@ -269,7 +270,7 @@ public class YoolooClientHandler extends Thread {
 		// ausgabeSpielplan(); // Fuer Debuginformationen sinnvoll
 		while (aktuellerStich == null) {
 			try {
-				YoolooLogger.info("[ClientHandler" + clientHandlerId + "] warte " + delay + " ms ");
+				//YoolooLogger.info("[ClientHandler" + clientHandlerId + "] warte " + delay + " ms ");
 				Thread.sleep(delay);
 			} catch (InterruptedException e) {
 				YoolooLogger.error(e.toString());
