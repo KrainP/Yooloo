@@ -45,6 +45,9 @@ public class YoolooJsonHandler {
                 json.put(Konstanten.JSON_FARBE, "");
 
                 schreibeJSON(jsonPath, json);
+            } else {
+                String text = new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8);
+                json = new JSONObject(text);
             }
         } catch (IOException e) {
             YoolooLogger.error(e.toString());
