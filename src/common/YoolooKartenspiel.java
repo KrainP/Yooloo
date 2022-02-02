@@ -7,6 +7,7 @@ package common;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 
@@ -106,15 +107,24 @@ public class YoolooKartenspiel {
 
 	// nur fuer Simulation / local
 	public void spielerSortierungFestlegen() {
+		System.out.println("Wähle Optionen und notiere die Nummer: ");
+		System.out.println("1. Durcheinander ");
+		System.out.println("2. von 1 bis 10 ");
+		System.out.println("3. von 10 bis 1 ");
 		for (int i = 0; i < spielerliste.size(); i++) {
-			int[] arrayZahl = {1,2,3};
-			int rnd = new Random().nextInt(arrayZahl.length);
-			if (arrayZahl[rnd] == 1){
+			Scanner scan = new Scanner(System.in);
+			//int[] arrayZahl = {1,2,3};
+			//int rnd = new Random().nextInt(arrayZahl.length);
+			int number = scan.nextInt();
+			if (number == 1){
 				spielerliste.get(i).sortierungFestlegen();
-			} else if (arrayZahl[rnd] == 2){
+			} else if (number == 2){
 				spielerliste.get(i).sortierungHochzählen();
-			} else if (arrayZahl[rnd] == 3){
+			} else if (number == 3){
 				spielerliste.get(i).sortierungRunterzählen();
+			} else {
+				System.out.println("nicht akzeptierte eingabe");
+				break;
 			}
 		}
 	}
@@ -126,7 +136,6 @@ public class YoolooKartenspiel {
 			System.out.println("Runde " + (i + 1));
 			// Schleife ueber Anzahl der Spieler
 			YoolooKarte[] stich = new YoolooKarte[spielerliste.size()];
-
 			for (int j = 0; j < spielerliste.size(); j++) {
 				YoolooKarte aktuelleKarte = spielerliste.get(j).getAktuelleSortierung()[i];
 				stich[j] = aktuelleKarte;
