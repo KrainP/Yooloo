@@ -9,13 +9,11 @@ public class YoolooLogger
 {
     static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     static FileHandler fileHandler = null;
-    //Handler handler = new ConsoleHandler();
 
     static
     {
         File directory = new File("./logs/");
         logger.setLevel(Level.ALL);
-        //handler.setLevel(Level.ALL);
 
         if (!directory.exists())
         {
@@ -37,7 +35,6 @@ public class YoolooLogger
         }
 
         fileHandler.setFormatter(new SimpleFormatter());
-        //logger.addHandler(handler);
         logger.addHandler(fileHandler);
     }
     public static void info(String msg)
@@ -48,7 +45,6 @@ public class YoolooLogger
     {
         logger.severe(msg);
     }
-
     public static void debug(String msg)
     {
         logger.fine(msg);
