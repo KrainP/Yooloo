@@ -5,13 +5,14 @@
 package server;
 
 import common.YoolooKartenspiel;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import common.YoolooKartenspiel;
+import utils.YoolooLogger;
 
 public class YoolooServer {
 
@@ -63,7 +64,7 @@ public class YoolooServer {
 			serverSocket = new ServerSocket(port);
 			spielerPool = Executors.newCachedThreadPool();
 			clientHandlerList = new ArrayList<YoolooClientHandler>();
-			System.out.println("Server gestartet - warte auf Spieler");
+			YoolooLogger.info("Server gestartet - warte auf Spieler");
 
 			while (serverAktiv) {
 				Socket client = null;
@@ -73,9 +74,9 @@ public class YoolooServer {
 					client = serverSocket.accept();
 					YoolooClientHandler clientHandler = new YoolooClientHandler(this, client);
 					clientHandlerList.add(clientHandler);
-					System.out.println("[YoolooServer] Anzahl verbundene Spieler: " + clientHandlerList.size());
+					YoolooLogger.info("[YoolooServer] Anzahl verbundene Spieler: " + clientHandlerList.size());
 				} catch (IOException e) {
-					System.out.println("Client Verbindung gescheitert");
+					YoolooLogger.error("Client Verbindung gescheitert");
 					e.printStackTrace();
 				}
 
@@ -98,7 +99,7 @@ public class YoolooServer {
 				}
 			}
 		} catch (IOException e1) {
-			System.out.println("ServerSocket nicht gebunden");
+			YoolooLogger.error("ServerSocket nicht gebunden");
 			serverAktiv = false;
 			e1.printStackTrace();
 		}
@@ -109,10 +110,10 @@ public class YoolooServer {
 	public void shutDownServer(int code) {
 		if (code == 543210) {
 			this.serverAktiv = false;
-			System.out.println("Server wird beendet");
+			YoolooLogger.info("Server wird beendet");
 			spielerPool.shutdown();
 		} else {
-			System.out.println("Servercode falsch");
+			YoolooLogger.info("Servercode falsch");
 		}
 	}
 }
