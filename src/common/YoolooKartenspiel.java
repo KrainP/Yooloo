@@ -5,10 +5,7 @@
 package common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 
 public class YoolooKartenspiel {
@@ -21,7 +18,7 @@ public class YoolooKartenspiel {
 
 	public final static int minKartenWert = 1;
 	public final static int maxKartenWert = 10;
-
+	public static int userInput = 0;
 	protected YoolooKarte[][] spielkarten;
 	protected int anzahlFarben = YoolooKartenspiel.Kartenfarbe.values().length;
 	protected int anzahlWerte = maxKartenWert;
@@ -108,25 +105,16 @@ public class YoolooKartenspiel {
 	// nur fuer Simulation / local
 	public void spielerSortierungFestlegen() {
 		System.out.println("Wähle Optionen und notiere die Nummer: ");
-		System.out.println("1. Durcheinander ");
-		System.out.println("2. von 1 bis 10 ");
-		System.out.println("3. von 10 bis 1 ");
+		System.out.println("1. mid, max, min");
+		System.out.println("2. min, max, mid");
+		System.out.println("3. min, mid, max");
+		System.out.println("4. Cheat mode");
 		for (int i = 0; i < spielerliste.size(); i++) {
 			Scanner scan = new Scanner(System.in);
-			//int[] arrayZahl = {1,2,3};
-			//int rnd = new Random().nextInt(arrayZahl.length);
-			int number = scan.nextInt();
-			if (number == 1){
-				spielerliste.get(i).sortierungFestlegen();
-			} else if (number == 2){
-				spielerliste.get(i).sortierungHochzählen();
-			} else if (number == 3){
-				spielerliste.get(i).sortierungRunterzählen();
-			} else {
-				System.out.println("nicht akzeptierte eingabe");
-				break;
-			}
+			userInput = scan.nextInt();
+			spielerliste.get(i).sortierungFestlegen(userInput);
 		}
+
 	}
 
 	// nur fuer Simulation / local

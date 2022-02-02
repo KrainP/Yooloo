@@ -4,10 +4,7 @@
 
 package client;
 
-import common.LoginMessage;
-import common.YoolooKartenspiel;
-import common.YoolooSpieler;
-import common.YoolooStich;
+import common.*;
 import messages.ClientMessage;
 import messages.ClientMessage.ClientMessageType;
 import messages.ServerMessage;
@@ -85,7 +82,7 @@ public class YoolooClient {
 					break;
 				case SERVERMESSAGE_SORT_CARD_SET:
 					// sortieren Karten
-					meinSpieler.sortierungFestlegen();
+					meinSpieler.sortierungFestlegen(YoolooKartenspiel.userInput);
 					ausgabeKartenSet();
 					// ggfs. Spielverlauf löschen
 					spielVerlauf = new YoolooStich[YoolooKartenspiel.maxKartenWert];
