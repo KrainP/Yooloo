@@ -167,12 +167,6 @@ public class YoolooClientHandler extends Thread {
 					YoolooLogger.info("Undefinierter Serverstatus - tue mal nichts!");
 				}
 			}
-		} catch (EOFException e) {
-			YoolooLogger.error(e.toString());
-			e.printStackTrace();
-		} catch (IOException e) {
-			YoolooLogger.error(e.toString());
-			e.printStackTrace();
 		} catch (Exception e) {
 			YoolooLogger.error(e.toString());
 			e.printStackTrace();
