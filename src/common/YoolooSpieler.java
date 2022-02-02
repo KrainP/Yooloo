@@ -5,8 +5,8 @@
 package common;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import common.YoolooKartenspiel.Kartenfarbe;
 import utils.YoolooLogger;
@@ -28,74 +28,63 @@ public class YoolooSpieler implements Serializable {
 		this.spielfarbe = null;
 		this.aktuelleSortierung = new YoolooKarte[maxKartenWert];
 	}
-
-	// Sortierung wird zufuellig ermittelt
-	public void sortierungFestlegen() {
+	public void sortierungCheat() {
 		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
 		for (int i = 0; i < neueSortierung.length; i++) {
-			int neuerIndex = (int) (Math.random() * neueSortierung.length);
-			while (neueSortierung[neuerIndex] != null) {
-				neuerIndex = (int) (Math.random() * neueSortierung.length);
-			}
-			neueSortierung[neuerIndex] = aktuelleSortierung[i];
-			// System.out.println(i+ ". neuerIndex: "+neuerIndex);
+			neueSortierung[i] = new YoolooKarte(Kartenfarbe.Blau, i + 1);
 		}
+		neueSortierung[2] = new YoolooKarte(Kartenfarbe.Gelb, 10);
 		aktuelleSortierung = neueSortierung;
 	}
 
-
-	public void sortierungHochzählen() {
-		int neuerIndex = -1;
-		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
-		for (int i = 0; i < neueSortierung.length; i++) {
-			if (i < 10) {
-				neuerIndex += 1;
+	public void sortierungFestlegen(int userInput) {
+		List<YoolooKarte> min = new ArrayList<>();
+		List<YoolooKarte> mid = new ArrayList<>();
+		List<YoolooKarte> max = new ArrayList<>();
+		// hier füllen wir die listen
+		for (int i = 0; i < this.aktuelleSortierung.length; i++) {
+			if (i < 3) {
+				min.add(new YoolooKarte(Kartenfarbe.Blau, i + 1));
+			} else if (i < 7){
+				mid.add(new YoolooKarte(Kartenfarbe.Blau, i + 1));
+			} else {
+				max.add(new YoolooKarte(Kartenfarbe.Blau, i + 1));
 			}
-			neueSortierung[neuerIndex] = aktuelleSortierung[i];
-			// System.out.println(i+ ". neuerIndex: "+neuerIndex);
 		}
-		aktuelleSortierung = neueSortierung;
-	}
 
-	public void sortierungRunterzählen() {
-		int neuerIndex = 10;
-		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
-		for (int i = 0; i < neueSortierung.length; i++) {
-			if (i < 10) {
-				neuerIndex -= 1;
-			}
-			neueSortierung[neuerIndex] = aktuelleSortierung[i];
-			// System.out.println(i+ ". neuerIndex: "+neuerIndex);
+		switch(userInput) {
+			case 1: aktuelleSortierung = getShuffleList(mid, max, min);
+				break;
+			case 2: aktuelleSortierung = getShuffleList(min, max, mid);
+				break;
+			case 3: aktuelleSortierung = getShuffleList(min, mid, max);
+				break;
+			case 4: sortierungCheat();
+				break;
 		}
-		aktuelleSortierung = neueSortierung;
-	}
 
-	// Sortierung wird zufuellig den größten und den kleinsten wert ermitteln
-	public void sortierungGroßMittelKlein() {
-		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
-		aktuelleSortierung = neueSortierung;
 	}
+	public YoolooKarte[] getShuffleList(List<YoolooKarte> list1, List<YoolooKarte> list2, List<YoolooKarte> list3) {
+		List<YoolooKarte> ret = new ArrayList<>();
+		//Die Listen werte werden gemischt
+		Collections.shuffle(list1);
+		Collections.shuffle(list2);
+		Collections.shuffle(list3);
 
-	// Sortierung wird zufuellig den größten und den kleinsten wert ermitteln
-	public void sortierungMittelGroßKlein() {
-		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
-		aktuelleSortierung = neueSortierung;
-	}
+		//Zusammenfügen der Listen
+		ret.addAll(list1);
+		ret.addAll(list2);
+		ret.addAll(list3);
 
-	public void sortierungMittelKleinGroß() {
-		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
-		aktuelleSortierung = neueSortierung;
+		int count = 0;
+		//umwandlung in Array, weil das Programm es so braucht
+		YoolooKarte[] result = new YoolooKarte[ret.size()];
+		for (YoolooKarte card : ret) {
+			result[count] = card;
+			count++;
+		}
+		return result;
 	}
-
-	public void sortierungKleinGroßMittel() {
-		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
-		aktuelleSortierung = neueSortierung;
-	}
-	public void sortierungGroßKleinMittel() {
-		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
-		aktuelleSortierung = neueSortierung;
-	}
-
 
 	public int erhaeltPunkte(int neuePunkte) {
 		YoolooLogger.info(name + " hat " + punkte + " P - erhaelt " + neuePunkte + " P - neue Summe: ");

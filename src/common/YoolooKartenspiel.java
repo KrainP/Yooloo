@@ -6,9 +6,7 @@ package common;
 
 import utils.YoolooLogger;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.stream.Collectors;
+import java.util.Scanner;
 
 
 public class YoolooKartenspiel {
@@ -21,7 +19,7 @@ public class YoolooKartenspiel {
 
 	public final static int minKartenWert = 1;
 	public final static int maxKartenWert = 10;
-
+	public static int userInput = 0;
 	protected YoolooKarte[][] spielkarten;
 	protected int anzahlFarben = YoolooKartenspiel.Kartenfarbe.values().length;
 	protected int anzahlWerte = maxKartenWert;
@@ -107,17 +105,17 @@ public class YoolooKartenspiel {
 
 	// nur fuer Simulation / local
 	public void spielerSortierungFestlegen() {
+		System.out.println("Wähle Optionen und notiere die Nummer: ");
+		System.out.println("1. mid, max, min");
+		System.out.println("2. min, max, mid");
+		System.out.println("3. min, mid, max");
+		System.out.println("4. Cheat mode");
 		for (int i = 0; i < spielerliste.size(); i++) {
-			int[] arrayZahl = {1,2,3};
-			int rnd = new Random().nextInt(arrayZahl.length);
-			if (arrayZahl[rnd] == 1){
-				spielerliste.get(i).sortierungFestlegen();
-			} else if (arrayZahl[rnd] == 2){
-				spielerliste.get(i).sortierungHochzählen();
-			} else if (arrayZahl[rnd] == 3){
-				spielerliste.get(i).sortierungRunterzählen();
-			}
+			Scanner scan = new Scanner(System.in);
+			userInput = scan.nextInt();
+			spielerliste.get(i).sortierungFestlegen(userInput);
 		}
+
 	}
 
 	// nur fuer Simulation / local
@@ -127,7 +125,6 @@ public class YoolooKartenspiel {
 			YoolooLogger.info("Runde " + (i + 1));
 			// Schleife ueber Anzahl der Spieler
 			YoolooKarte[] stich = new YoolooKarte[spielerliste.size()];
-
 			for (int j = 0; j < spielerliste.size(); j++) {
 				YoolooKarte aktuelleKarte = spielerliste.get(j).getAktuelleSortierung()[i];
 				stich[j] = aktuelleKarte;
