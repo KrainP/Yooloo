@@ -9,9 +9,8 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-
 public class YoolooKartenspiel {
-	
+
 	public enum Kartenfarbe {
 		Gelb, Rot, Gruen, Blau, Orange, Pink, Violett, Tuerkis
 	}
@@ -26,8 +25,6 @@ public class YoolooKartenspiel {
 	protected int anzahlWerte = maxKartenWert;
 	ArrayList<YoolooSpieler> spielerliste = new ArrayList<YoolooSpieler>();
 
-
-	
 	/**
 	 * Erstellen einer neuen Spielumgebung Definition des Spielnamens der
 	 * Spielkarten
@@ -60,7 +57,8 @@ public class YoolooKartenspiel {
 	}
 
 	/**
-	 * Luesst einen neuen Spieler an dem Spiel teilnehmen /Fuer lokale Simulationsmit
+	 * Luesst einen neuen Spieler an dem Spiel teilnehmen /Fuer lokale
+	 * Simulationsmit
 	 * mit Zuordnung der Farbe
 	 * 
 	 * @param name
@@ -78,7 +76,8 @@ public class YoolooKartenspiel {
 	}
 
 	/**
-	 * Luesst ein YoolooSpieler aus ClientServer Variante an dem Spiel teilnehmen Der
+	 * Luesst ein YoolooSpieler aus ClientServer Variante an dem Spiel teilnehmen
+	 * Der
 	 * Spieler erhuelt die Farbe korrespondierend zur ClientHandlerID
 	 * 
 	 * @param spielerName
@@ -103,15 +102,21 @@ public class YoolooKartenspiel {
 	// nur fuer Simulation / local
 	public void spielerSortierungFestlegen() {
 		for (int i = 0; i < spielerliste.size(); i++) {
-			int[] arrayZahl = {1,2,3};
+			int[] arrayZahl = { 1, 2, 3 };
 			int rnd = new Random().nextInt(arrayZahl.length);
-			if (arrayZahl[rnd] == 1){
+			if (arrayZahl[rnd] == 1) {
 				spielerliste.get(i).sortierungFestlegen();
-			} else if (arrayZahl[rnd] == 2){
+			} else if (arrayZahl[rnd] == 2) {
 				spielerliste.get(i).sortierungHochzählen();
-			} else if (arrayZahl[rnd] == 3){
+			} else if (arrayZahl[rnd] == 3) {
 				spielerliste.get(i).sortierungRunterzählen();
 			}
+		}
+	}
+
+	public void RandomSortierungFestlegen() {
+		for (int i = 0; i < spielerliste.size(); i++) {
+			spielerliste.get(i).sortierungFestlegen();
 		}
 	}
 
@@ -129,7 +134,7 @@ public class YoolooKartenspiel {
 				System.out.println(spielerliste.get(j).getName() + " spielt " + aktuelleKarte.toString());
 			}
 			int stichgewinner = berechneGewinnerIndex(stich);
-			if (stichgewinner>=0) {
+			if (stichgewinner >= 0) {
 				spielerliste.get(stichgewinner).erhaeltPunkte(i + 1);
 			}
 		}
@@ -202,14 +207,13 @@ public class YoolooKartenspiel {
 		System.out.println("Kein gewinnerIndex: ermittelt" + gewinnerIndex);
 		return gewinnerIndex;
 	}
-	
-   public String getSpielname() {
-   return Spielname;
-}
 
-public void setSpielname(String spielname) {
-   Spielname = spielname;
-}
- 
+	public String getSpielname() {
+		return Spielname;
+	}
+
+	public void setSpielname(String spielname) {
+		Spielname = spielname;
+	}
 
 }

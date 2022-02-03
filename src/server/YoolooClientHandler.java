@@ -3,7 +3,6 @@
 //  V0.106  |200107| cic |    130 | change ServerMessageType.SERVERMESSAGE_RESULT_SET to SERVERMESSAGE_RESULT_SET200107| cic |    130 | change ServerMessageType.SERVERMESSAGE_RESULT_SET to SERVERMESSAGE_RESULT_SET
 //  V0.106  |      | cic |        | change empfangeVomClient(this.ois) to empfangeVomClient()
 
-
 package server;
 
 import java.io.EOFException;
@@ -88,67 +87,103 @@ public class YoolooClientHandler extends Thread {
 					System.out.println("[ClientHandler" + clientHandlerId + "] Nachricht Vom Client: " + message);
 				}
 				switch (state) {
-				case ServerState_REGISTER:
-					// Neuer YoolooSpieler in Runde registrieren
-					cheaterList = new ArrayList<>();
-					if (antwortObject instanceof LoginMessage) {
-						LoginMessage newLogin = (LoginMessage) antwortObject;
-						// TODO GameMode des Logins wird noch nicht ausgewertet
-						meinSpieler = new YoolooSpieler(newLogin.getSpielerName(), YoolooKartenspiel.maxKartenWert);
-						meinSpieler.setClientHandlerId(clientHandlerId);
-						registriereSpielerInSession(meinSpieler);
-						oos.writeObject(meinSpieler);
-						sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
-								null);
-						this.state = ServerState.ServerState_PLAY_SESSION;
-						break;
-					}
-				case ServerState_PLAY_SESSION:
-					switch (session.getGamemode()) {
-					case GAMEMODE_SINGLE_GAME:
-						// Triggersequenz zur Abfrage der einzelnen Karten des Spielers
-						for (int stichNummer = 0; stichNummer < YoolooKartenspiel.maxKartenWert; stichNummer++) {
-							sendeKommando(ServerMessageType.SERVERMESSAGE_SEND_CARD,
-									ClientState.CLIENTSTATE_PLAY_SINGLE_GAME, null, stichNummer);
-							// Neue YoolooKarte in Session ausspielen und Stich abfragen
-							YoolooKarte neueKarte = (YoolooKarte) empfangeVomClient();
-							if (allPlayedCards.size() >= 10 || allPlayedCards.contains(neueKarte.getWert()) || neueKarte.getWert() < YoolooKartenspiel.minKartenWert || neueKarte.getWert() > YoolooKartenspiel.maxKartenWert) {
-								neueKarte.setWert(0);
-								meinSpieler.setPunkte(0);
-								if (!cheaterList.contains(meinSpieler.getName())) cheaterList.add(meinSpieler.getName());
-							} else {
-								if (cheaterList.contains(meinSpieler.getName())) neueKarte.setWert(0);
-								allPlayedCards.add(neueKarte.getWert());
+					case ServerState_REGISTER:
+						// Neuer YoolooSpieler in Runde registrieren
+						cheaterList = new ArrayList<>();
+						if (antwortObject instanceof LoginMessage) {
+							LoginMessage newLogin = (LoginMessage) antwortObject;
+							// TODO GameMode des Logins wird noch nicht ausgewertet
+							meinSpieler = new YoolooSpieler(newLogin.getSpielerName(), YoolooKartenspiel.maxKartenWert);
+							meinSpieler.setClientHandlerId(clientHandlerId);
+							registriereSpielerInSession(meinSpieler);
+							oos.writeObject(meinSpieler);
+							switch (session.getGamemode()) {
+								case GAMEMODE_SINGLE_GAME:
+									sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET,
+											ClientState.CLIENTSTATE_SORT_CARDS,
+											null);
+								default:
+									this.state = ServerState.ServerState_PLAY_SESSION;
+									break;
 							}
-							System.out.println("[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);
-							YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
-							// Punkte fuer gespielten Stich ermitteln
-							if (currentstich.getSpielerNummer() == clientHandlerId && neueKarte.getWert() != 0) {
-								meinSpieler.erhaeltPunkte(stichNummer + 1);
-							}
-							System.out.println("[ClientHandler" + clientHandlerId + "] Stich " + stichNummer
-									+ " wird gesendet: " + currentstich.toString());
-							// Stich an Client uebermitteln
-							oos.writeObject(currentstich);
 						}
-						this.state = ServerState.ServerState_DISCONNECT;
-						if (!cheaterList.isEmpty()) sendeKommando(ServerMessageType.CHEATER_DETECTED, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK, cheaterList.toString());
-						else sendeKommando(ServerMessageType.CHEATER_DETECTED, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK, null);
+					case ServerState_PLAY_SESSION:
+						switch (session.getGamemode()) {
+							case GAMEMODE_SINGLE_GAME:
+								// Triggersequenz zur Abfrage der einzelnen Karten des Spielers
+								for (int stichNummer = 0; stichNummer < YoolooKartenspiel.maxKartenWert; stichNummer++) {
+									sendeKommando(ServerMessageType.SERVERMESSAGE_SEND_CARD,
+											ClientState.CLIENTSTATE_PLAY_SINGLE_GAME, null, stichNummer);
+									// Neue YoolooKarte in Session ausspielen und Stich abfragen
+									YoolooKarte neueKarte = (YoolooKarte) empfangeVomClient();
+									if (allPlayedCards.size() >= 10 || allPlayedCards.contains(neueKarte.getWert())
+											|| neueKarte.getWert() < YoolooKartenspiel.minKartenWert
+											|| neueKarte.getWert() > YoolooKartenspiel.maxKartenWert) {
+										neueKarte.setWert(0);
+										meinSpieler.setPunkte(0);
+										if (!cheaterList.contains(meinSpieler.getName()))
+											cheaterList.add(meinSpieler.getName());
+									} else {
+										if (cheaterList.contains(meinSpieler.getName()))
+											neueKarte.setWert(0);
+										allPlayedCards.add(neueKarte.getWert());
+									}
+									System.out.println(
+											"[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);
+									YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
+									// Punkte fuer gespielten Stich ermitteln
+									if (currentstich.getSpielerNummer() == clientHandlerId
+											&& neueKarte.getWert() != 0) {
+										meinSpieler.erhaeltPunkte(stichNummer + 1);
+									}
+									System.out.println("[ClientHandler" + clientHandlerId + "] Stich " + stichNummer
+											+ " wird gesendet: " + currentstich.toString());
+									// Stich an Client uebermitteln
+									oos.writeObject(currentstich);
+								}
+								this.state = ServerState.ServerState_DISCONNECT;
+								if (!cheaterList.isEmpty())
+									sendeKommando(ServerMessageType.CHEATER_DETECTED,
+											ClientState.CLIENTSTATE_DISCONNECT,
+											ServerMessageResult.SERVER_MESSAGE_RESULT_OK, cheaterList.toString());
+								else
+									sendeKommando(ServerMessageType.CHEATER_DETECTED,
+											ClientState.CLIENTSTATE_DISCONNECT,
+											ServerMessageResult.SERVER_MESSAGE_RESULT_OK, null);
+								break;
+							case GAMEMODE_R2D2_GAME:
+
+								session.aktuellesSpiel.RandomSortierungFestlegen();
+								session.aktuellesSpiel.spieleRunden();
+								session.aktuellesSpiel.listeSpielstand();
+
+								this.state = ServerState.ServerState_DISCONNECT;
+								if (!cheaterList.isEmpty())
+									sendeKommando(ServerMessageType.CHEATER_DETECTED,
+											ClientState.CLIENTSTATE_DISCONNECT,
+											ServerMessageResult.SERVER_MESSAGE_RESULT_OK, cheaterList.toString());
+								else
+									sendeKommando(ServerMessageType.CHEATER_DETECTED,
+											ClientState.CLIENTSTATE_DISCONNECT,
+											ServerMessageResult.SERVER_MESSAGE_RESULT_OK, null);
+								break;
+							default:
+								System.out
+										.println("[ClientHandler" + clientHandlerId + "] GameMode nicht implementiert");
+								this.state = ServerState.ServerState_DISCONNECT;
+								break;
+						}
+					case ServerState_DISCONNECT:
+						// todo cic
+						sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE,
+								ClientState.CLIENTSTATE_DISCONNECTED, null);
+						// sendeKommando(ServerMessageType.SERVERMESSAGE_RESULT_SET,
+						// ClientState.CLIENTSTATE_DISCONNECTED, null);
+						oos.writeObject(session.getErgebnis());
+						this.state = ServerState.ServerState_DISCONNECTED;
 						break;
 					default:
-						System.out.println("[ClientHandler" + clientHandlerId + "] GameMode nicht implementiert");
-						this.state = ServerState.ServerState_DISCONNECT;
-						break;
-					}
-				case ServerState_DISCONNECT:
-				// todo cic
-            sendeKommando(ServerMessageType.SERVERMESSAGE_CHANGE_STATE, ClientState.CLIENTSTATE_DISCONNECTED,  null);
-//					sendeKommando(ServerMessageType.SERVERMESSAGE_RESULT_SET, ClientState.CLIENTSTATE_DISCONNECTED,	null);
-					oos.writeObject(session.getErgebnis());
-					this.state = ServerState.ServerState_DISCONNECTED;
-					break;
-				default:
-					System.out.println("Undefinierter Serverstatus - tue mal nichts!");
+						System.out.println("Undefinierter Serverstatus - tue mal nichts!");
 				}
 			}
 		} catch (EOFException e) {
@@ -179,7 +214,7 @@ public class YoolooClientHandler extends Thread {
 	}
 
 	private void sendeKommando(ServerMessageType serverMessageType, ClientState clientState,
-							   ServerMessageResult serverMessageResult, String message) throws IOException {
+			ServerMessageResult serverMessageResult, String message) throws IOException {
 		ServerMessage kommandoMessage = new ServerMessage(serverMessageType, clientState, serverMessageResult, message);
 		System.out.println("[ClientHandler" + clientHandlerId + "] Sende Kommando: " + kommandoMessage.toString());
 		oos.writeObject(kommandoMessage);

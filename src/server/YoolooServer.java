@@ -19,6 +19,7 @@ public class YoolooServer {
 	private int port = 44137;
 	private int spielerProRunde = 8; // min 1, max Anzahl definierte Farben in Enum YoolooKartenSpiel.KartenFarbe)
 	private GameMode serverGameMode = GameMode.GAMEMODE_SINGLE_GAME;
+	private GameMode serverGameModeBot = GameMode.GAMEMODE_R2D2_GAME;
 
 	public GameMode getServerGameMode() {
 		return serverGameMode;
@@ -45,6 +46,7 @@ public class YoolooServer {
 	public enum GameMode {
 		GAMEMODE_NULL, // Spielmodus noch nicht definiert
 		GAMEMODE_SINGLE_GAME, // Spielmodus: einfaches Spiel
+		GAMEMODE_R2D2_GAME, // Spielmodus: Bot Game
 		GAMEMODE_PLAY_ROUND_GAME, // noch nicht genutzt: Spielmodus: Eine Runde von Spielen
 		GAMEMODE_PLAY_LIGA, // noch nicht genutzt: Spielmodus: Jeder gegen jeden
 		GAMEMODE_PLAY_POKAL, // noch nicht genutzt: Spielmodus: KO System
@@ -64,6 +66,7 @@ public class YoolooServer {
 			spielerPool = Executors.newCachedThreadPool();
 			clientHandlerList = new ArrayList<YoolooClientHandler>();
 			System.out.println("Server gestartet - warte auf Spieler");
+			long starttime = System.currentTimeMillis();
 
 			while (serverAktiv) {
 				Socket client = null;
@@ -77,6 +80,29 @@ public class YoolooServer {
 				} catch (IOException e) {
 					System.out.println("Client Verbindung gescheitert");
 					e.printStackTrace();
+				}
+
+				long endtime = System.currentTimeMillis();
+				long elapsed = endtime - starttime;
+				if (elapsed > 60000) {
+					// Neue Session starten wenn nicht ausreichend Spieler verbunden sind und 1
+					// minute vergangen ist!
+					if (clientHandlerList.size() < Math.min(spielerProRunde,
+							YoolooKartenspiel.Kartenfarbe.values().length) && clientHandlerList.size() > 0) {
+						// Init Session
+						YoolooSession yoolooSession = new YoolooSession(clientHandlerList.size(), serverGameModeBot);
+
+						// Starte pro Client einen ClientHandlerTread
+						for (int i = 0; i < clientHandlerList.size(); i++) {
+							YoolooClientHandler ch = clientHandlerList.get(i);
+							ch.setHandlerID(i);
+							ch.joinSession(yoolooSession);
+							spielerPool.execute(ch); // Start der ClientHandlerThread - Aufruf der Methode run()
+						}
+
+						// nuechste Runde eroeffnen
+						clientHandlerList = new ArrayList<YoolooClientHandler>();
+					}
 				}
 
 				// Neue Session starten wenn ausreichend Spieler verbunden sind!

@@ -9,24 +9,24 @@ import common.YoolooKartenspiel;
 public class Starter {
 	public static void main(String[] args) {
 
-//		Initialisieren des Spiels
+		// Initialisieren des Spiels
 
 		YoolooKartenspiel yooloo = new YoolooKartenspiel();
 		yooloo.listeSpielstand();
 
-//		Registrieren der Spieler
+		// Registrieren der Spieler
 		yooloo.spielerRegistrieren("Juergen");
 		yooloo.spielerRegistrieren("Reiner");
 		yooloo.spielerRegistrieren("Benedikt");
 		yooloo.spielerRegistrieren("Olaf");
 
-//		Sortieren der Karten
+		// Sortieren der Karten
 		yooloo.spielerSortierungFestlegen();
 
-//		Ausspielend der Runden
+		// Ausspielend der Runden
 		yooloo.spieleRunden();
 
-//		Spielstand anzeigen
+		// Spielstand anzeigen
 		yooloo.listeSpielstand();
 
 	}

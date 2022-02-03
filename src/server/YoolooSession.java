@@ -12,27 +12,35 @@ import server.YoolooServer.GameMode;
 public class YoolooSession {
 
 	private int anzahlSpielerInRunde;
+	private int BotSpielerInRunde;
 	private GameMode gamemode = GameMode.GAMEMODE_NULL;
 	private YoolooKarte[][] spielplan;
-	private YoolooKartenspiel aktuellesSpiel;
+	public YoolooKartenspiel aktuellesSpiel;
 	private YoolooStich[] ausgewerteteStiche;
 
-	public YoolooSession(int anzahlSpielerInRunde) {
+	public YoolooSession(int anzahlSpielerInRunde, GameMode gamemode2) {
 		super();
+		if (gamemode2 == GameMode.GAMEMODE_R2D2_GAME) {
+			BotSpielerInRunde = 8 - anzahlSpielerInRunde;
+			anzahlSpielerInRunde = 8;
+		}
 		this.anzahlSpielerInRunde = anzahlSpielerInRunde;
-		gamemode = GameMode.GAMEMODE_NULL;
+		gamemode = gamemode2;
 		spielplan = new YoolooKarte[YoolooKartenspiel.maxKartenWert][anzahlSpielerInRunde];
 		ausgewerteteStiche = new YoolooStich[YoolooKartenspiel.maxKartenWert];
 		for (int i = 0; i < ausgewerteteStiche.length; i++) {
 			ausgewerteteStiche[i] = null;
 		}
 		aktuellesSpiel = new YoolooKartenspiel();
+		for (int i = 0; i < BotSpielerInRunde; i++) {
+			aktuellesSpiel.spielerRegistrieren("Bot" + i);
+		}
 	}
 
-	public YoolooSession(int anzahlSpielerInRunde, GameMode gamemode) {
-		this(anzahlSpielerInRunde);
-		this.gamemode = gamemode;
-	}
+	// public YoolooSession(int anzahlSpielerInRunde, GameMode gamemode) {
+	// this(anzahlSpielerInRunde);
+	// gamemode = this.gamemode;
+	// }
 
 	public synchronized void spieleKarteAus(int stichNummer, int spielerID, YoolooKarte karte) {
 		spielplan[spielerID][stichNummer] = karte;
