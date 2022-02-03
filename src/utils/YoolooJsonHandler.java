@@ -1,6 +1,7 @@
 package utils;
 
 import allgemein.Konstanten;
+import common.YoolooKarte;
 import common.YoolooSpieler;
 import org.json.JSONObject;
 
@@ -9,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.List;
 
 /**
  * Diese Klasse stellt alle JSON benötigten Methoden bereit
@@ -34,7 +36,7 @@ public class YoolooJsonHandler {
             boolean mkdirs = resDir.mkdirs();
         }
 
-        String jsonPath = Konstanten.RES_PATH + "/" + username + ".json";
+        String jsonPath = Konstanten.RES_PATH +  username + ".json";
         File jsonFile = new File(jsonPath);
         try {
             if (!jsonFile.exists()) {
@@ -42,7 +44,7 @@ public class YoolooJsonHandler {
                 json = new JSONObject();
                 json.put(Konstanten.JSON_USERNAME, username);
                 json.put(Konstanten.JSON_HIGHSCORE, 0);
-                json.put(Konstanten.JSON_FARBE, "");
+                json.put(Konstanten.JSON_KARTENSORTIERUNG, "");
 
                 schreibeJSON(jsonPath, json);
             } else {
@@ -53,7 +55,6 @@ public class YoolooJsonHandler {
             YoolooLogger.error(e.toString());
             e.printStackTrace();
         }
-
         return json;
     }
 
@@ -64,14 +65,15 @@ public class YoolooJsonHandler {
      * @throws Exception IOException
      */
     public void aktualisierePunkte(YoolooSpieler meinSpieler) throws Exception {
-        JSONObject json;
+        JSONObject json = null;
         String username = meinSpieler.getName();
 
-        String jsonPath = Konstanten.RES_PATH + "/" + username + ".json";
+        String jsonPath = Konstanten.RES_PATH + username + ".json";
         File jsonFile = new File(jsonPath);
 
         String text = new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8);
         json = new JSONObject(text);
+
         int aktPunkte = meinSpieler.getPunkte();
         int aktHighscore = json.getInt(Konstanten.JSON_HIGHSCORE);
         if (aktPunkte > aktHighscore) {
@@ -92,5 +94,26 @@ public class YoolooJsonHandler {
             file.write(json.toString());
             file.flush();
         }
+    }
+
+    public void setzeSortierung(YoolooSpieler meinSpieler, List<YoolooKarte> cardList) throws Exception{
+        String username = meinSpieler.getName();
+
+        String jsonPath = Konstanten.RES_PATH + username + ".json";
+        File jsonFile = new File(jsonPath);
+
+        String text = new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8);
+        JSONObject json = new JSONObject(text);
+
+        StringBuilder sortierung = new StringBuilder();
+
+        for(YoolooKarte card : cardList) {
+            sortierung.append(card.getWert()).append(";");
+        }
+        String rev = sortierung.reverse().toString().replaceFirst(";", "");
+        sortierung = new StringBuilder(rev);
+        sortierung.reverse();
+        json.put(Konstanten.JSON_KARTENSORTIERUNG, sortierung.toString());
+        schreibeJSON(jsonPath, json);
     }
 }

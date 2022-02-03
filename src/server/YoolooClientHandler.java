@@ -50,6 +50,8 @@ public class YoolooClientHandler extends Thread {
 
 	public static List<String> cheaterList = new ArrayList<>();
 
+	private List<YoolooKarte> cardList;
+
 	public YoolooClientHandler(YoolooServer yoolooServer, Socket clientSocket) {
 		this.myServer = yoolooServer;
 		myServer.toString();
@@ -78,6 +80,7 @@ public class YoolooClientHandler extends Thread {
 	public void run() {
 		try {
 			List<Integer> allPlayedCards = new ArrayList<>();
+			List<YoolooKarte> cardList = new ArrayList<>();
 			JSONObject userJson = new JSONObject();
 			state = ServerState.ServerState_CONNECT; // Verbindung zum Client aufbauen
 			verbindeZumClient();
@@ -105,7 +108,6 @@ public class YoolooClientHandler extends Thread {
 						// initialize JSON handler
 						jsonHandler = new YoolooJsonHandler();
 						userJson = jsonHandler.holeClientJSON(meinSpieler);
-
 						int highscore = userJson.getInt(Konstanten.JSON_HIGHSCORE);
 
 						meinSpieler.setHighscore(highscore);
@@ -142,6 +144,7 @@ public class YoolooClientHandler extends Thread {
 								if (cheaterList.contains(meinSpieler.getName())) neueKarte.setWert(0);
 								allPlayedCards.add(neueKarte.getWert());
 							}
+							cardList.add(neueKarte);
 							YoolooLogger.info("[ClientHandler" + clientHandlerId + "] Karte empfangen:" + neueKarte);
 							YoolooStich currentstich = spieleKarte(stichNummer, neueKarte);
 							// Punkte fuer gespielten Stich ermitteln
@@ -152,6 +155,10 @@ public class YoolooClientHandler extends Thread {
 									+ " wird gesendet: " + currentstich.toString());
 							// Stich an Client uebermitteln
 							oos.writeObject(currentstich);
+						}
+						if(cardList.size() == 10) {
+							jsonHandler.setzeSortierung(meinSpieler, cardList);
+							sendeKommando(ServerMessageType.SERVERMESSAGE_CARDLIST, ClientState.CLIENTSTATE_NULL, ServerMessageResult.SERVER_MESSAGE_RESULT_OK, cardList.toString());
 						}
 						this.state = ServerState.ServerState_DISCONNECT;
 						if (!cheaterList.isEmpty()) sendeKommando(ServerMessageType.CHEATER_DETECTED, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK, cheaterList.toString());

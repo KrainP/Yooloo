@@ -80,7 +80,7 @@ public class YoolooKartenspiel {
 	 * Luesst ein YoolooSpieler aus ClientServer Variante an dem Spiel teilnehmen Der
 	 * Spieler erhuelt die Farbe korrespondierend zur ClientHandlerID
 	 * 
-	 * @param spielerName
+	 * @param neuerSpieler
 	 * @return
 	 */
 	public YoolooSpieler spielerRegistrieren(YoolooSpieler neuerSpieler) {
