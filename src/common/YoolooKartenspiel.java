@@ -117,6 +117,15 @@ public class YoolooKartenspiel {
 		}
 
 	}
+	public void PlayerSortierungFestlegen(int userInput) {
+		spielerliste.get(7).sortierungFestlegen(userInput);
+	}
+
+	public void RandomSortierungFestlegen() {
+		for (int i = 0; i < spielerliste.size() ; i++) {
+			spielerliste.get(i).sortierungFestlegenBots();
+		}
+	}
 
 	// nur fuer Simulation / local
 	public void spieleRunden() {
