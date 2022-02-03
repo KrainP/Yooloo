@@ -115,16 +115,19 @@ public class YoolooClientHandler extends Thread {
 
 						YoolooSpieler checkSpieler = registriereSpielerInSession(meinSpieler);
 						oos.writeObject(meinSpieler);
-						if(checkSpieler != null) {
-							sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
-									null);
-							this.state = ServerState.ServerState_PLAY_SESSION;
-						} else {
-							state = ServerState.ServerState_REGISTER; // Abfragen der Spieler LoginMessage
-							sendeKommando(ServerMessageType.SERVERMESSAGE_SENDLOGIN, ClientState.CLIENTSTATE_LOGIN, null);
+						switch (session.getGamemode()) {
+							case GAMEMODE_SINGLE_GAME:
+								if(checkSpieler != null) {
+									sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
+											null);
+									this.state = ServerState.ServerState_PLAY_SESSION;
+								} else {
+									state = ServerState.ServerState_REGISTER; // Abfragen der Spieler LoginMessage
+									sendeKommando(ServerMessageType.SERVERMESSAGE_SENDLOGIN, ClientState.CLIENTSTATE_LOGIN, null);
+								}
+							default:
+								break;
 						}
-
-						break;
 					}
 				case ServerState_PLAY_SESSION:
 					switch (session.getGamemode()) {
@@ -164,6 +167,16 @@ public class YoolooClientHandler extends Thread {
 						if (!cheaterList.isEmpty()) sendeKommando(ServerMessageType.CHEATER_DETECTED, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK, cheaterList.toString());
 						else sendeKommando(ServerMessageType.CHEATER_DETECTED, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK, null);
 						break;
+						case GAMEMODE_R2D2_Game:
+
+							session.aktuellesSpiel.RandomSortierungFestlegen();
+							session.aktuellesSpiel.spieleRunden();
+							session.aktuellesSpiel.listeSpielstand();
+
+							this.state = ServerState.ServerState_DISCONNECT;
+							if (!cheaterList.isEmpty()) sendeKommando(ServerMessageType.CHEATER_DETECTED, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK, cheaterList.toString());
+							else sendeKommando(ServerMessageType.CHEATER_DETECTED, ClientState.CLIENTSTATE_DISCONNECT, ServerMessageResult.SERVER_MESSAGE_RESULT_OK, null);
+							break;
 					default:
 						YoolooLogger.info("[ClientHandler" + clientHandlerId + "] GameMode nicht implementiert");
 						this.state = ServerState.ServerState_DISCONNECT;

@@ -37,6 +37,20 @@ public class YoolooSpieler implements Serializable {
 		aktuelleSortierung = neueSortierung;
 	}
 
+	// Sortierung wird zufuellig ermittelt
+	public void sortierungFestlegenBots() {
+		YoolooKarte[] neueSortierung = new YoolooKarte[this.aktuelleSortierung.length];
+		for (int i = 0; i < neueSortierung.length; i++) {
+			int neuerIndex = (int) (Math.random() * neueSortierung.length);
+			while (neueSortierung[neuerIndex] != null) {
+				neuerIndex = (int) (Math.random() * neueSortierung.length);
+			}
+			neueSortierung[neuerIndex] = aktuelleSortierung[i];
+			// System.out.println(i+ ". neuerIndex: "+neuerIndex);
+		}
+		aktuelleSortierung = neueSortierung;
+	}
+
 	public void sortierungFestlegen(int userInput) {
 		List<YoolooKarte> min = new ArrayList<>();
 		List<YoolooKarte> mid = new ArrayList<>();
