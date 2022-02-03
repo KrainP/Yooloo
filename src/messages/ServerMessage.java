@@ -37,7 +37,8 @@ public class ServerMessage implements Serializable {
 		SERVERMESSAGE_SEND_CARD, // Karten werden an Spieler ausgegeben
 		SERVERMESSAGE_RESULT_SET, // Stich wird an Spieler zurueckgegeben
 		SERVERMESSAGE_CHANGE_STATE, // Manuelle Steuerung des Clienstatus
-		CHEATER_DETECTED
+		CHEATER_DETECTED,
+		SERVERMESSAGE_CARDLIST		// Last player sorting
 
 	};
 

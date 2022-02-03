@@ -35,7 +35,7 @@ public class YoolooClient {
 		super();
 	}
 
-	public YoolooClient(String serverHostname, int serverPort) {
+	public  YoolooClient(String serverHostname, int serverPort) {
 		super();
 		this.serverPort = serverPort;
 		this.serverHostname = serverHostname;
@@ -102,7 +102,9 @@ public class YoolooClient {
 					           // basic version: wechsel zu ClientState Disconnected thread beenden
 				case SERVERMESSAGE_CHANGE_STATE:
 				break ;
-
+					case SERVERMESSAGE_CARDLIST:
+						if (kommandoMessage.getMessage() != null)
+							System.out.println(meinSpieler.getName() + " verwendete Sortierung: " + kommandoMessage.getMessage());
 				default:
 					break;
 				}
