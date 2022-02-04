@@ -115,8 +115,6 @@ public class YoolooClientHandler extends Thread {
 
 						YoolooSpieler checkSpieler = registriereSpielerInSession(meinSpieler);
 						oos.writeObject(meinSpieler);
-						switch (session.getGamemode()) {
-							case GAMEMODE_SINGLE_GAME:
 								if(checkSpieler != null) {
 									sendeKommando(ServerMessageType.SERVERMESSAGE_SORT_CARD_SET, ClientState.CLIENTSTATE_SORT_CARDS,
 											null);
@@ -125,9 +123,9 @@ public class YoolooClientHandler extends Thread {
 									state = ServerState.ServerState_REGISTER; // Abfragen der Spieler LoginMessage
 									sendeKommando(ServerMessageType.SERVERMESSAGE_SENDLOGIN, ClientState.CLIENTSTATE_LOGIN, null);
 								}
-							default:
+
 								break;
-						}
+
 					}
 				case ServerState_PLAY_SESSION:
 					switch (session.getGamemode()) {
