@@ -33,8 +33,10 @@ public class YoolooSession {
 			ausgewerteteStiche[i] = null;
 		}
 		aktuellesSpiel = new YoolooKartenspiel();
-		for (int i = 0; i < botspielerinRunde; i++) {
-			aktuellesSpiel.spielerRegistrieren("Bot" + i);
+		if (gameMode2 == GameMode.GAMEMODE_R2D2_Game) {
+			for (int i = 0; i < botspielerinRunde; i++) {
+				aktuellesSpiel.spielerRegistrieren("Bot" + i);
+			}
 		}
 	}
 
